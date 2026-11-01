@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1425">
+  <meta name="description" content="Digitalize documentos, ajuste bordas e gere PDFs sem enviar nada para a nuvem.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ScanPDF">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>ScanPDF · Scanner de documentos</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="./" aria-label="ScanPDF, página inicial">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M10 4H6a2 2 0 0 0-2 2v4m18-6h4a2 2 0 0 1 2 2v4M4 22v4a2 2 0 0 0 2 2h4m18-6v4a2 2 0 0 1-2 2h-4" stroke="currentColor" stroke-width="2.7" stroke-linecap="round"/><rect x="10" y="9" width="12" height="15" rx="2" fill="currentColor" opacity=".9"/><path d="M13 14h6m-6 4h6" stroke="#0D1726" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+          <span class="brand-name">Scan<span>PDF</span><span class="brand-dot">.</span></span>
+        </a>
+        <div class="header-actions">
+          <span class="privacy-note"><svg viewBox="0 0 24 24" fill="none"><path d="m12 3 8 4v5c0 5-3.4 8-8 10-4.6-2-8-5-8-10V7l8-4Z" stroke="currentColor" stroke-width="1.6"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> Privacidade em primeiro lugar</span>
+          <span id="online-status" class="status-pill"><span class="status-dot"></span> Verificando...</span>
+          <button id="install-btn" class="btn btn-ghost btn-sm hidden" type="button"><span class="icon-text">↓</span> Instalar</button>
+        </div>
+      </div>
+    </header>
+    <main class="main-container">
+      <div class="intro-section">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> SEU SCANNER DIGITAL</div>
+          <h1>Documentos em PDF.<br><span>Simples assim.</span></h1>
+          <p class="intro-text">Fotografe, ajuste as bordas e transforme várias imagens em um PDF de qualidade. Tudo diretamente no seu aparelho.</p>
+        </div>
+        <div class="intro-aside"><span class="shield-icon">◈</span><div><strong>100% privado</strong><span>Suas imagens não saem do dispositivo.</span></div></div>
+      </div>
+      <div class="toolbar">
+        <div class="toolbar-primary">
+          <button id="camera-btn" type="button" class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h4l2-2h4l2 2h4v12H4V7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.8"/></svg> Usar câmera</button>
+          <button id="gallery-btn" type="button" class="btn btn-secondary"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.2" cy="8.2" r="1.5" stroke="currentColor" stroke-width="1.5"/><path d="m4 18 5-5 3 3 4-5 5 6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> Adicionar imagens</button>
+          <input id="camera-input" type="file" accept="image/*" capture="environment" hidden>
+          <input id="gallery-input" type="file" accept="image/*,.heic,.heif" multiple hidden>
+        </div>
+        <div class="toolbar-secondary"><span id="document-total">0 páginas</span><span class="toolbar-sep"></span><span>PDF local e offline</span></div>
+      </div>
+      <div class="workspace">
+        <aside class="pages-panel panel">
+          <div class="panel-heading"><div><span class="heading-kicker">ORGANIZAÇÃO</span><h2>Suas páginas <span id="pages-count" class="count-badge">0</span></h2></div><button id="add-page-btn" type="button" class="icon-btn" aria-label="Adicionar páginas" title="Adicionar páginas">+</button></div>
+          <div id="pages-empty" class="pages-empty">As páginas digitalizadas aparecerão aqui, na ordem do PDF.</div>
+          <div id="pages-list" class="pages-list" aria-label="Lista de páginas"></div>
+          <div class="pages-footer"><button id="clear-btn" class="text-button" type="button" disabled>Limpar tudo</button><span>Arraste arquivos para adicionar</span></div>
+        </aside>
+        <section class="editor-panel panel" aria-label="Editor de digitalização">
+          <div class="panel-heading editor-heading"><div><span class="heading-kicker">VISUALIZAÇÃO</span><h2 id="editor-title">Pré-visualização</h2></div><div id="editor-tools" class="editor-toptools hidden"><button id="detect-btn" class="small-action" type="button" title="Tenta identificar o documento automaticamente">Detectar bordas</button><button id="reset-btn" class="small-action" type="button" title="Redefinir o recorte">Redefinir</button></div></div>
+          <div id="empty-state" class="empty-state" role="button" tabindex="0" aria-label="Adicionar imagens">
+            <div class="empty-visual"><span class="paper-paper paper-back"></span><span class="paper-paper paper-front"><i></i><i></i><i></i></span><span class="empty-cross cross-tl"></span><span class="empty-cross cross-tr"></span><span class="empty-cross cross-br"></span><span class="empty-cross cross-bl"></span><span class="empty-sparkle">✦</span></div>
+            <h3>Pronto para digitalizar?</h3><p>Adicione uma imagem ou fotografe um documento.<br>Você também pode arrastar arquivos para esta área.</p>
+            <button id="empty-add" type="button" class="btn btn-outline">Escolher imagens <span aria-hidden="true">→</span></button>
+            <div class="supported">JPG, PNG, WEBP e formatos compatíveis com o navegador</div>
+          </div>
+          <div id="editor-content" class="editor-content hidden">
+            <div class="editor-modes"><div class="segmented" role="group" aria-label="Modo de visualização"><button id="mode-crop" type="button" class="mode-btn active" aria-pressed="true">Ajustar recorte</button><button id="mode-result" type="button" class="mode-btn" aria-pressed="false">Ver resultado</button></div><span id="editor-guidance">Arraste os pontos para ajustar o documento.</span></div>
+            <div id="image-stage" class="image-stage"><div id="page-surface" class="page-surface"><img id="source-image" alt="Documento selecionado" draggable="false"><svg id="crop-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><path id="crop-shade" fill="rgba(5,11,22,.49)" fill-rule="evenodd"></path><polygon id="crop-line" fill="rgba(94,238,191,.07)" stroke="#5eeebf" stroke-width="3" stroke-dasharray="9 4" vector-effect="non-scaling-stroke"></polygon></svg><div id="crop-handles" class="crop-handles"><button class="crop-handle" data-corner="0" type="button" aria-label="Canto superior esquerdo"></button><button class="crop-handle" data-corner="1" type="button" aria-label="Canto superior direito"></button><button class="crop-handle" data-corner="2" type="button" aria-label="Canto inferior direito"></button><button class="crop-handle" data-corner="3" type="button" aria-label="Canto inferior esquerdo"></button></div><img id="processed-image" alt="Resultado digitalizado" class="hidden" draggable="false"></div></div>
+            <div class="editor-footer"><div id="page-dimensions" class="page-dimensions">—</div><button id="rotate-btn" type="button" class="small-action"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8V3m0 5h5M4 8a8 8 0 1 1-1 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Girar 90°</button></div>
+          </div>
+        </section>
+        <aside class="settings-panel panel">
+          <div class="panel-heading"><div><span class="heading-kicker">ACABAMENTO</span><h2>Configurações</h2></div></div>
+          <div class="settings-content">
+            <div><label class="setting-label">Filtro de imagem</label><div id="filter-controls" class="filter-list"><button class="filter-chip active" type="button" data-filter="enhance" aria-pressed="true"><span class="filter-preview filter-enhance"></span>Melhorado</button><button class="filter-chip" type="button" data-filter="color" aria-pressed="false"><span class="filter-preview filter-color"></span>Original</button><button class="filter-chip" type="button" data-filter="gray" aria-pressed="false"><span class="filter-preview filter-gray"></span>Cinza</button><button class="filter-chip" type="button" data-filter="bw" aria-pressed="false"><span class="filter-preview filter-bw"></span>Preto e branco</button></div></div>
+            <div class="setting-divider"></div>
+            <div><label for="paper-size" class="setting-label">Tamanho do papel</label><select id="paper-size" class="setting-select"><option value="auto">A4 · orientação automática</option><option value="portrait">A4 · retrato</option><option value="landscape">A4 · paisagem</option></select></div>
+            <div><label for="quality" class="setting-label">Qualidade de exportação</label><select id="quality" class="setting-select"><option value="standard">Equilibrada · recomendado</option><option value="high">Alta qualidade</option><option value="compact">Arquivo menor</option></select></div>
+            <div class="setting-divider"></div>
+            <div class="security-message"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 20 6v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4Z" stroke="currentColor" stroke-width="1.8"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><p><strong>Privacidade garantida pelo design</strong><br>O processamento é local. Nenhuma fotografia é enviada a servidores.</p></div>
+            <button id="export-btn" class="btn btn-export" type="button" disabled><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Gerar PDF</span></button>
+            <p id="export-hint" class="export-hint">Adicione pelo menos uma página para exportar.</p>
+          </div>
+        </aside>
+      </div>
+      <footer class="site-footer"><span>ScanPDF · Seu scanner, suas regras.</span><span>Sem conta • Sem anúncios • Sem upload</span></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="progress-overlay" class="progress-overlay hidden" role="status" aria-live="polite"><div class="progress-card"><div class="spinner"></div><strong id="progress-title">Processando...</strong><span id="progress-detail">Preparando suas páginas.</span><div class="progress-track"><div id="progress-bar"></div></div></div></div>
+  <script defer src="./app.js"></script>
+</body>
+</html>
